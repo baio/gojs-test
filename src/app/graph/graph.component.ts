@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { GraphView } from './gojs.types';
-import { create, bind, DiagramConfig } from './gojs-graph';
+import { GraphView, GroupView } from './basic-layout/basic-layout.types';
+import { create, bind, DiagramConfig } from './basic-layout/basic-layout';
+import { diagram } from './basic-layout/basic-layout.data';
 
 
 @Component({
@@ -48,50 +49,6 @@ export class GraphComponent implements OnInit {
         }
       };
 
-      const diagram: GraphView = {
-        nodes: [
-          {
-              key: -1,
-              isGroup: true,
-              data: {
-                  label: "zzzz",
-                  isCloseToComplete: true,
-                  state: "passed"
-              }
-          },
-          {
-            key: "111",
-            group: -1,
-            category: "rect",
-            data: {
-                state: "passed",
-                label: "xxxxx",
-                block: {
-                  code: "zzzz",
-                  description: "zzzz",
-                  points: 100,
-                  state: "passed"
-              }
-            }
-          },
-          {
-            key: "2222",
-            group: -1,
-            category: "rect",
-            data: {
-                state: "passed",
-                label: "xxxxx",
-                block: {
-                  code: "zzzz",
-                  description: "zzzz",
-                  points: 100,
-                  state: "passed"
-              }
-            }
-          }
-        ],
-        links: []
-      };
 
       const graph = create("graph_canvas").run(config);
       bind(graph, diagram);

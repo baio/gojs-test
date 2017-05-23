@@ -1,51 +1,24 @@
-export type BlockState = "passed" | "enabled" | "disabled" | "active";
-
-export interface BlockData {
-    code: string
-    description: string
-    points: number
-    state: BlockState
+export interface GroupView<T> {
+    key: string
+    isGroup: true
+    data: T
 }
 
-export interface GroupView {
-    key: number
-    isGroup: boolean
-    data: {
-        label: string
-        isCloseToComplete: boolean
-        state: "passed" | "enabled" | "disabled"
-    }
-}
-
-export type NodeViewCategory = "rect" | "rrect" | "circle";
-
-export interface NodeView {
+export interface NodeView<T, C> {
     key: string
     group: number
-    category: NodeViewCategory
-    data: {
-        state: BlockState,
-        label: string,
-        block: BlockData,
-    }
+    category: C
+    data: T
 }
 
-export interface LinkView {
+export interface LinkView<T> {
     from: string
     to: string
-    data: {
-        state: BlockState
-    }
+    data: T
 }
 
-export interface GraphSummaryView {
-    passedPoints: number
-    selectedPoints: number
-    totalPoints: number
-}
-
-export interface GraphView {
-    nodes: (NodeView|GroupView)[]
-    links: LinkView[]
+export interface GraphView<N extends NodeView<any, any>, G extends GroupView<any>, L extends LinkView<any>>  {
+    nodes: (N|G)[]
+    links: L[]
 }
 

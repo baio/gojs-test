@@ -1,6 +1,6 @@
 import * as go from 'gojs';
 import * as R from 'ramda';
-import * as T from './gojs.types';
+import * as T from './release-plan-graph-layout.types';
 
 const $ = go.GraphObject.make;  // for conciseness in defining templates
 declare var require;
