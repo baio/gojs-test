@@ -190,7 +190,7 @@ const diagram = (selector: string) => Reader((env: DiagramConfig) =>
     )
 )
 
-export const create = (selector: string) => {
+export const create = (selector: string) : Reader => {
 
     return Reader.of(drm => nodeTemplateMap => linkTemplate => groupTemplate => {
       drm.nodeTemplateMap = nodeTemplateMap;
@@ -208,6 +208,7 @@ export const create = (selector: string) => {
 export const bind = (diagram: any, graph: T.GraphView) => {
 
     if (diagram.model.nodeDataArray.length > 0) {
+
       const model = diagram.model;
       model.startTransaction("update");
 
@@ -227,6 +228,7 @@ export const bind = (diagram: any, graph: T.GraphView) => {
         }
       });
       model.commitTransaction("update");
+
     }
     else {
       diagram.model = new go.GraphLinksModel(graph.nodes, graph.links);

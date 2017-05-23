@@ -25,22 +25,9 @@ export class GraphComponent implements OnInit {
           disabled: "black"
         },
         groupColors: {
-          passed: {
-            fill: "white",
-            text: "black",
-            border: "black"
-          },
-          enabled: {
-            fill: "white",
-            text: "black",
-            border: "black"
-          },
-          disabled: {
-            fill: "white",
-            text: "black",
-            border: "black"
-          }
-
+          passed: { border: "#f8d58c", text: "#a8863b", fill: "#fceed1" },
+          disabled: { border: "#6b6b6b", text: "#838383", fill: "#dadada" },
+          enabled: { border: "#f8d58c", text: "#a8863b", fill: "#fceed1" }
         },
         nodeColors: {
           passed: {
@@ -62,15 +49,19 @@ export class GraphComponent implements OnInit {
       };
 
       const diagram: GraphView = {
-        summary: {
-          passedPoints: 100,
-          selectedPoints: 200,
-          totalPoints: 300
-        },
         nodes: [
           {
+              key: -1,
+              isGroup: true,
+              data: {
+                  label: "zzzz",
+                  isCloseToComplete: true,
+                  state: "passed"
+              }
+          },
+          {
             key: "111",
-            group: 1,
+            group: -1,
             category: "rect",
             data: {
                 state: "passed",
@@ -82,7 +73,21 @@ export class GraphComponent implements OnInit {
                   state: "passed"
               }
             }
-
+          },
+          {
+            key: "2222",
+            group: -1,
+            category: "rect",
+            data: {
+                state: "passed",
+                label: "xxxxx",
+                block: {
+                  code: "zzzz",
+                  description: "zzzz",
+                  points: 100,
+                  state: "passed"
+              }
+            }
           }
         ],
         links: []

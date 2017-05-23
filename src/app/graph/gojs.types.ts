@@ -38,8 +38,6 @@ export interface LinkView {
     }
 }
 
-export type GroupNodeView = GroupView | NodeView;
-
 export interface GraphSummaryView {
     passedPoints: number
     selectedPoints: number
@@ -47,8 +45,7 @@ export interface GraphSummaryView {
 }
 
 export interface GraphView {
-    summary: GraphSummaryView
-    nodes: GroupNodeView[]
+    nodes: (NodeView|GroupView)[]
     links: LinkView[]
 }
 
