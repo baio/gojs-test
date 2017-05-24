@@ -6,7 +6,7 @@ export interface GroupView<T> {
 
 export interface NodeView<T, C> {
     key: string
-    group: number
+    group: string
     category: C
     data: T
 }

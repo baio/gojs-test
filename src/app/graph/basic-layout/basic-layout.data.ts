@@ -1,4 +1,4 @@
-import { GraphView } from './release-plan-graph-layout.types';
+import { GraphView } from './basic-layout.types';
 
 export const diagram: GraphView = {
   nodes: [
