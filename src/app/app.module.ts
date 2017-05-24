@@ -5,11 +5,13 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { GraphComponent } from './graph/graph.component';
+import { Draw2dComponent } from './draw2d/draw2d.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GraphComponent
+    GraphComponent,
+    Draw2dComponent
   ],
   imports: [
     BrowserModule,
