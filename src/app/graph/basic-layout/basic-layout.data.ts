@@ -6,7 +6,11 @@ export const diagram: GraphView = {
         key: "-1",
         isGroup: true,
         data: {
-            label: "111",
+            layout: {
+              row: 0,
+              cols: [0, 1]
+            },
+            label: "g-1",
             isCloseToComplete: true,
             state: "passed"
         }
@@ -15,9 +19,13 @@ export const diagram: GraphView = {
         key: "-2",
         isGroup: true,
         data: {
-            label: "222",
+            layout: {
+              row: 0,
+              cols: [1, 2]
+            },
+            label: "g-2",
             isCloseToComplete: false,
-            state: "active"
+            state: "passed"
         }
     },
     {
@@ -26,9 +34,9 @@ export const diagram: GraphView = {
       category: "rect",
       data: {
           state: "passed",
-          label: "xxxxx",
+          label: "n-1",
           block: {
-            code: "zzzz",
+            code: "n-1",
             description: "zzzz",
             points: 100,
             state: "passed"
@@ -41,15 +49,17 @@ export const diagram: GraphView = {
       category: "rect",
       data: {
           state: "passed",
-          label: "xxxxx",
+          label: "n-2",
           block: {
-            code: "zzzz",
+            code: "n-2",
             description: "zzzz",
             points: 100,
             state: "passed"
         }
       }
+
     }
+
   ],
   links: []
 };

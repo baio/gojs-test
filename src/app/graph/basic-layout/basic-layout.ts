@@ -6,7 +6,7 @@ const $ = go.GraphObject.make;  // for conciseness in defining templates
 declare var require;
 //const Reader = require('ramda-fantasy').Reader;
 import { Reader } from 'ramda-fantasy';
-
+import { RangeGraphLayout, RangeGroupLayout } from './grid-layout';
 
 //http://gojs.net/latest/api/symbols/Shape.html#figure
 //http://gojs.net/latest/intro/shapes.html
@@ -143,9 +143,9 @@ const groupTemplate = Reader((env: DiagramConfig) =>
   $(go.Group, "Auto",
       {
         selectable: true,
-        layout: $(go.TreeLayout, { nodeSpacing: 3 }),
+        layout: $(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }),
         subGraphExpandedChanged: env.onGroupCollapse || null,
-        isSubGraphExpanded: false
+        isSubGraphExpanded: true
       },
       $(go.Shape, "Rectangle",
         {
@@ -182,7 +182,7 @@ const diagram = (selector: string) => Reader((env: DiagramConfig) =>
     $(go.Diagram, selector,  // create a Diagram for the DIV HTML element
         {
             initialAutoScale: go.Diagram.UniformToFill,
-            layout: $(go.LayeredDigraphLayout),
+            layout: $(RangeGraphLayout),
             "animationManager.isEnabled": false,
             "undoManager.isEnabled": false,
             ObjectSingleClicked: env.onObjectSingleClicked || null
