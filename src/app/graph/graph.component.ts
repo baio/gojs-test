@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { GraphView, GroupView } from './basic-layout/basic-layout.types';
-import { create, bind, DiagramConfig } from './basic-layout/basic-layout';
+import { create, bind, DiagramConfig } from './basic-layout/basic-scheme';
 import { diagram } from './basic-layout/basic-layout.data';
 
 

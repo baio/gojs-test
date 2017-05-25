@@ -1,243 +1,160 @@
 import * as go from 'gojs';
-import * as R from 'ramda';
-import * as T from './basic-layout.types';
 
-const $ = go.GraphObject.make;  // for conciseness in defining templates
-declare var require;
-//const Reader = require('ramda-fantasy').Reader;
-import { Reader } from 'ramda-fantasy';
-import { RangeGraphLayout, RangeGroupLayout } from './grid-layout';
+const settings = {
 
-//http://gojs.net/latest/api/symbols/Shape.html#figure
-//http://gojs.net/latest/intro/shapes.html
-//http://gojs.net/latest/intro/templateMaps.html
-//http://gojs.net/latest/intro/ports.html
-//http://gojs.net/latest/intro/dataBinding.html
-//http://gojs.net/latest/intro/usingModels.html
+  unitWidth: 200,
+  unitHeight: 50
 
-export interface EntyColors {
-  fill: string
-  text: string
-  border: string
 }
 
-export interface StateColors<T> {
-  passed: T
-  enabled: T
-  disabled: T
-  active?: T
+interface NodeLayout {
+  //row, relative to parent group
+  row: number
+  //cols, absolute
+  cols: [number, number]
 }
 
-export type EntyStateColors = StateColors<EntyColors>;
-export type SimpleStateColors = StateColors<string>;
-
-export interface DiagramConfig {
-  onGroupCollapse: Function
-  onObjectSingleClicked: Function
-  linkDashedStyle: number[]// [12, 5]
-  linkColors: SimpleStateColors
-  groupColors: EntyStateColors
-  nodeColors: EntyStateColors
+interface NodePosition {
+  x: number
+  y: number
 }
 
-const getEntyColor = R.curry((colors: EntyStateColors, type: "fill"|"text"|"border", enty: any) : string =>
-  colors[enty.data.state][type]
-)
+interface NodeParams {
+  layout: NodeLayout
+  position: NodePosition
+}
 
-const getSimpleColor = R.curry((colors: SimpleStateColors, enty: any) : string =>
-  colors[enty.data.state]
-)
-
-const nodeContent = Reader((env: DiagramConfig) =>
-    $(go.TextBlock,
-        {
-          margin: 3,
-          row: 1,
-          column: 1,
-          maxSize: new go.Size(200, NaN)
-        },  // some room around the text
-        new go.Binding("text", "", ({data: {label}}) => label),
-        new go.Binding("stroke", "", getEntyColor(env.nodeColors, "text"))
-    )
-)
-
-const chainContent = f =>
-  nodeContent.chain(content => Reader(env => f(env, content)))
+const mapNodeToParams = (node: go.Node) => ({
+  position: node.position,
+  layout: node.data.data.layout
+})
 
 
-const rectNode = chainContent((env: DiagramConfig, content) =>  $(go.Node, "Auto",
-        $(go.Shape, {
-            geometryString: "F M 0 0, 150 0, 155 50, 150 100, 0 100, 0 0",
-            strokeWidth: 1
-          },
-          new go.Binding("stroke", "", getEntyColor(env.nodeColors, "border")),
-          new go.Binding("fill", "", getEntyColor(env.nodeColors, "fill")),
-        ),
-        content
-      )
-)
+const setGroupPosition = (parent: NodeParams) => (node: go.Node) => {
 
-const roundRectNode = chainContent((env: DiagramConfig, content) =>  $(go.Node, "Auto",  // the Shape will go around the TextBlock
-        $(go.Shape, "RoundedRectangle", {
-           strokeWidth: 1
-          },
-          new go.Binding("stroke", "", getEntyColor(env.nodeColors, "border")),
-          new go.Binding("fill", "", getEntyColor(env.nodeColors, "fill"))
-        ),
-        content
-      )
-)
+  if (!parent) {
+    //set root group (layout) params (no relative offsets)
+    parent = {position: {x: 0, y: 0}, layout: { row: 0, cols: [0, 0] }};
+  }
 
-const circleNode =
-  chainContent((env: DiagramConfig, content) => $(go.Node, "Vertical",
-      $(go.Shape, "Ellipse",{
-          width: 40,
-          height: 40,
-          portId: "",
-          fromSpot: go.Spot.Right,
-          toSpot: go.Spot.Left
-        },
-        new go.Binding("stroke", "", getEntyColor(env.nodeColors, "border")),
-        new go.Binding("fill", "", getEntyColor(env.nodeColors, "fill"))
-      ),
-      content
-    )
-  )
+  const parentPosition = parent.position;
+  const parentLayout: NodeLayout = parent.layout;
 
-const nodeTemplateMap =
-  Reader.of(rect => rrect  => circle => {
-    const templmap = new go.Map("string", go.Node);
-    templmap.add("rect", rect);
-    templmap.add("rrect", rrect);
-    templmap.add("circle", circle);
-    return templmap;
-  })
-  .ap(rectNode)
-  .ap(roundRectNode)
-  .ap(circleNode)
+  const nodeLayout: NodeLayout = node.data.data.layout;
 
-export type NodeCategories = "rect" | "rrect" | "circle";
+  //node's x = container node x position + offset relative to the left border of the container in pixels = (offset in units) * (unit width)
+  const x = parentPosition.x + (nodeLayout.cols[0] - parentLayout.cols[0]) * settings.unitWidth;
+  //node's y =  container node y position + offset relative to the top ((row index) * (unit height))
+  const y = parentPosition.y + (nodeLayout.row * settings.unitHeight);
+  //set abs position of the node (calculated relatively parent group)
+  node.position = new go.Point(x, y);
 
-//const dashedStyleParams = [12, 5];
+  //node width = (width in units) * (unit width)
+  node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
+  node.height = settings.unitHeight;
+  node.resizable = false;
 
-const linkTemplate = Reader((env: DiagramConfig) =>
-      $(go.Link, {
-        selectable: true,
-      },
-        $(go.Shape,
-          {
-            strokeWidth: 1,
-            strokeDashArray: env.linkDashedStyle
-          },
-          new go.Binding("strokeDashArray", "dash"),
-          new go.Binding("stroke", "", getSimpleColor(env.linkColors))
-        ),
-        $(go.Shape,  // arrowhead
-          { toArrow: "Triangle", stroke: null, scale: 1 },
-          new go.Binding("fill", "", getSimpleColor(env.linkColors))
-        )
-      )
-)
+  console.log("===", nodeLayout, node.position)
 
-const groupTemplate = Reader((env: DiagramConfig) =>
-  $(go.Group, "Auto",
-      {
-        selectable: true,
-        layout: $(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }),
-        subGraphExpandedChanged: env.onGroupCollapse || null,
-        isSubGraphExpanded: true
-      },
-      $(go.Shape, "Rectangle",
-        {
-          fill: "white"
-        },
-        new go.Binding("stroke", "", getEntyColor(env.groupColors, "border")),
-      ),
-      $(go.Panel, "Vertical", // position header above the subgraph
-          { defaultAlignment: go.Spot.Left, margin: 0 },
-          $(go.Panel, "Horizontal", // the header
-            {
-              alignment: go.Spot.Top,
-              stretch: go.GraphObject.Fill
-            },
-            $("SubGraphExpanderButton", { alignment: go.Spot.Left }),
-            $(go.TextBlock,
-              {
-                font: "14px Sans-Serif",
-                margin: 4
-              },
-              new go.Binding("text", "", x =>
-                x.data.isCloseToComplete ? x.data.label + " [^] " : x.data.label
-              ),
-              new go.Binding("stroke", "", getEntyColor(env.groupColors, "text")),
-            ),
-            new go.Binding("background", "", getEntyColor(env.groupColors, "fill"))
-          ),
-          $(go.Placeholder, { padding: 10 })
-      )
-    )
-)
+  if (node instanceof go.Group) {
 
-const diagram = (selector: string) => Reader((env: DiagramConfig) =>
-    $(go.Diagram, selector,  // create a Diagram for the DIV HTML element
-        {
-            initialAutoScale: go.Diagram.UniformToFill,
-            layout: $(RangeGraphLayout),
-            "animationManager.isEnabled": false,
-            "undoManager.isEnabled": false,
-            ObjectSingleClicked: env.onObjectSingleClicked || null
-        }
-    )
-)
+    const setPosition = setGroupPosition(mapNodeToParams(node));
+    node.memberParts.iterator.filter(n => n instanceof go.Node).each(setPosition);
+  }
 
-export const create = (selector: string) : Reader => {
+  /*
+  nodes.forEach((group: go.Group, i) => {
 
-    return Reader.of(drm => nodeTemplateMap => linkTemplate => groupTemplate => {
-      drm.nodeTemplateMap = nodeTemplateMap;
-      drm.linkTemplate = linkTemplate;
-      drm.groupTemplate = groupTemplate;
-      return drm;
-    })
-    .ap(diagram(selector))
-    .ap(nodeTemplateMap)
-    .ap(linkTemplate)
-    .ap(groupTemplate)
+    //calc child nodes positions (relatively to parent nodes)
+    const childNodes = group.memberParts.iterator.filter(n => n instanceof go.Node);
+
+    childNodes.each(node =>
+      node.position = new go.Point(group.position.x, group.position.y)
+    );
+
+  });
+  */
+
+  /*
+  group.position = new go.Point(i * 200, group.data.data.layout.row * 100);
+  group.resizeObject.width = 100;
+  group.resizeObject.height = NaN;
+  group.resizable = true;
+
+  //calc child nodes positions (relatively to parent nodes)
+  const childNodes = group.memberParts.iterator.filter(n => n instanceof go.Node);
+
+  childNodes.each(node =>
+    node.position = new go.Point(group.position.x, group.position.y)
+  );
+  */
+
+}
+
+export class RangeGraphLayout extends go.GridLayout {
+
+  private _doLayout(coll, group: go.Group) {
+    // get the Nodes and Links to be laid out
+    const parts = this.collectParts(coll);
+
+    //calc root nodes positions
+    const setPosition = setGroupPosition(null);
+
+    const nodes = parts.toArray()
+      .filter(n => n instanceof go.Node)
+      .forEach(setPosition);
+  }
+
+  private _doChildsLayout(group: go.Group) {
+
+    //this.diagram.startTransaction("RangeGraphLayout");
+    this._doLayout(group.memberParts.iterator, group);
+    //this.diagram.commitTransaction("RangeGraphLayout");
+  }
+
+  public doLayout(coll) {
+    //super.doLayout(coll);
+    this._doLayout(coll, this.group);
+    //super.doLayout(coll);
+  }
 }
 
 
-export const bind = (diagram: any, graph: T.GraphView) => {
+export class RangeGroupLayout extends go.GridLayout {
 
-    if (diagram.model.nodeDataArray.length > 0) {
+  private _doLayout(coll, group: go.Group) {
 
-      const model = diagram.model;
-      model.startTransaction("update");
+    // get the Nodes and Links to be laid out
+    const parts = this.collectParts(coll);
 
-      const nodesData = model.nodeDataArray;
-      const linksData = model.linkDataArray;
+    let nodes = parts.toArray()
+      .filter(n => n instanceof go.Node);
 
-      nodesData.forEach(n => {
-        const node = graph.nodes.find(x => x.key === n.key);
-        if (!R.equals(n.data, node.data)) {
-          model.setDataProperty(n, "data", node.data);
-        }
+    console.log("222", nodes.map(x => x.data.data), group.data.data);
+
+    /*
+      nodes
+      .forEach((node, i) => {
+        node.position = new go.Point(i * 200, node.data.data.layout.row * 100);
+        node.resizeObject.width = 100;
+        node.resizeObject.height = NaN;
+        node.resizable = true;
       });
-      linksData.forEach(l => {
-        const link = graph.links.find(x => x.from === l.from && x.to === l.to);
-        if (!R.equals(l.data, link.data)) {
-          model.setDataProperty(l, "data", link.data);
-        }
-      });
-      model.commitTransaction("update");
+    */
 
-    }
-    else {
-      diagram.model = new go.GraphLinksModel(graph.nodes, graph.links);
-    }
+  }
 
-}
+  private _doChildsLayout(group: go.Group) {
 
-export const update = (diagram: any, model: T.GraphView) => {
-    //diagram.clear();
-    //diagram.model = new go.GraphLinksModel(model.nodes, model.links);
-    console.log(diagram.model);
+    this.diagram.startTransaction("RangeGroupLayout");
+    this._doLayout(group.memberParts.iterator, group);
+    this.diagram.commitTransaction("RangeGroupLayout");
+  }
+
+  public doLayout(coll) {
+
+    //super.doLayout(coll);
+    this._doLayout(coll, this.group);
+
+  }
 }

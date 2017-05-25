@@ -1,5 +1,6 @@
 export interface GroupView<T> {
     key: string
+    group: string
     isGroup: true
     data: T
 }
