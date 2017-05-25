@@ -63,14 +63,16 @@ const getGroupHeight = (group: go.Group) => {
 
 }
 
-const getNodeTopOffset = (node: go.Node) => {
+const getNodeTopRelativeOffset = (node: go.Node) => {
 
-  //get node top offset by calculating total heights of previous siblings
+  //get node top offset (relative to the group)  by calculating total heights of previous siblings
   //calc each previous row height (by index) and then sum each rows max height
   // then calc total sum
   // !!! Previous rows in the parent group must already be calculated (have activated height)
   const nodeRow = getNodeLayout(node).row;
   let rowHeights = {};
+  //console.log("1111", getNodeLayout(node));
+  //getSiblingNodes(node).map(getNodeLayout).each(console.log);
   getSiblingNodes(node)
     .filter((n: go.Node) => getNodeLayout(n).row < nodeRow)
     .each(n => {
@@ -104,8 +106,8 @@ const setGroupPosition = (parent: NodeParams) => (node: go.Node) => {
 
   //node's x = container node x position + offset relative to the left border of the container in pixels = (offset in units) * (unit width)
   const x = parentPosition.x + (nodeLayout.cols[0] - parentLayout.cols[0]) * settings.unitWidth;
-  //node's y = get total sum of group's previous rows heights (they must be already calculated)
-  const y = getNodeTopOffset(node);
+  //node's y = get total sum of group's previous rows heights (they must be already calculated) + parent offset
+  const y = getNodeTopRelativeOffset(node) + parentPosition.y;
 
   //set abs position of the node (calculated relatively parent group)
   node.position = new go.Point(x, y);
