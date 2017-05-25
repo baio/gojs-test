@@ -11,26 +11,25 @@ export class RangeGraphLayout extends go.GridLayout {
 
     console.log("111", nodes.map(x => x.data.data));
 
-      nodes
-      .forEach((group: go.Group, i) => {
-        group.position = new go.Point(i * 200, group.data.data.layout.row * 100);
-        group.resizeObject.width = 100;
-        group.resizeObject.height = NaN;
-        group.resizable = true;
+    //calc root nodes positions
+    nodes.forEach((group: go.Group, i) => {
+      group.position = new go.Point(i * 200, group.data.data.layout.row * 100);
+      group.resizeObject.width = 100;
+      group.resizeObject.height = NaN;
+      group.resizable = true;
 
-        const childNodes = group.memberParts.iterator.filter(n => n instanceof go.Node);
+      //calc child nodes positions (relatively to parent nodes)
+      const childNodes = group.memberParts.iterator.filter(n => n instanceof go.Node);
 
-        console.log("+++", nodes.map(x => x.data.data));
+      childNodes.each(node =>
+        node.position = new go.Point(group.position.x, group.position.y)
+      );
 
-        childNodes.each(node =>
-          node.position = new go.Point(group.position.x, group.position.y)
-        );
-
-      });
+    });
 
   }
 
-  private _doChildsLayout(group:go.Group){
+  private _doChildsLayout(group: go.Group) {
 
     this.diagram.startTransaction("RangeGraphLayout");
     this._doLayout(group.memberParts.iterator, group);
@@ -69,7 +68,7 @@ export class RangeGroupLayout extends go.GridLayout {
 
   }
 
-  private _doChildsLayout(group:go.Group){
+  private _doChildsLayout(group: go.Group) {
 
     this.diagram.startTransaction("RangeGroupLayout");
     this._doLayout(group.memberParts.iterator, group);

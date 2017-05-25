@@ -29,7 +29,7 @@ export const diagram: GraphView = {
         }
     },
     {
-      key: "111",
+      key: "n-1",
       group: "-1",
       category: "rect",
       data: {
@@ -44,7 +44,7 @@ export const diagram: GraphView = {
       }
     },
     {
-      key: "2222",
+      key: "n-2",
       group: "-2",
       category: "rect",
       data: {
@@ -61,7 +61,15 @@ export const diagram: GraphView = {
     }
 
   ],
-  links: []
+  links: [
+    {
+      from: "n-1",
+      to: "n-2",
+      data: {
+        state: "passed"
+      }
+    }
+  ]
 };
 
 
