@@ -1,4 +1,5 @@
 import * as go from 'gojs';
+import * as R from 'ramda';
 
 const settings = {
 
@@ -29,6 +30,65 @@ const mapNodeToParams = (node: go.Node) => ({
   layout: node.data.data.layout
 })
 
+const getNodesFomParts = (parts: go.Iterator<go.Part>) =>
+  parts.iterator.filter(n => n instanceof go.Node);
+
+const getChildrenNodes = (group: go.Group) =>
+  getNodesFomParts(group.memberParts)
+
+const getSiblingNodes = (node: go.Node) =>
+  getNodesFomParts(node.containingGroup ? node.containingGroup.memberParts : node.layer.parts);
+
+const getNodeLayout = (node: go.Node) : NodeLayout =>
+  node.data.data.layout
+
+const getGroupHeight = (group: go.Group) => {
+
+    //get group height by calculating height of the children nodes
+    //calc each column height and then take ones max height
+    let colHeights = {};
+    getChildrenNodes(group).each(n => {
+      const nl: NodeLayout = n.data.data.layout;
+      for(let i = nl.cols[0]; i < nl.cols[1]; i++) {
+        //update cols heights for single node
+        colHeights[i] = colHeights[i] ? colHeights[i] + n.height : n.height;
+      }
+    });
+
+    // Get max col height
+    return R.pipe(
+      R.values,
+      R.reduce(R.max, -Infinity)
+    )(colHeights);
+
+}
+
+const getNodeTopOffset = (node: go.Node) => {
+
+    //get node top offset by calculating total heights of previous siblings
+    //calc each previous row height (by index) and then sum each rows max height
+    // then calc total sum
+    // !!! Previous rows in the parent group must already be calculated (have activated height)
+    const nodeRow = getNodeLayout(node).row;
+    let rowHeights = {};
+    getSiblingNodes(node)
+    .filter((n: go.Node) => getNodeLayout(n).row < nodeRow)
+    .each(n => {
+      const nl: NodeLayout = n.data.data.layout;
+      for(let i = 0; i < nodeRow; i++) {
+        //get row with max height
+        if (!rowHeights[i] || n.height > rowHeights[i]) {
+          rowHeights[i] = n.height;
+        }
+      }
+    });
+
+    // Get total rows height
+    return R.pipe(
+      R.values,
+      R.sum
+    )(rowHeights);
+}
 
 const setGroupPosition = (parent: NodeParams) => (node: go.Node) => {
 
@@ -44,23 +104,36 @@ const setGroupPosition = (parent: NodeParams) => (node: go.Node) => {
 
   //node's x = container node x position + offset relative to the left border of the container in pixels = (offset in units) * (unit width)
   const x = parentPosition.x + (nodeLayout.cols[0] - parentLayout.cols[0]) * settings.unitWidth;
-  //node's y =  container node y position + offset relative to the top ((row index) * (unit height))
-  const y = parentPosition.y + (nodeLayout.row * settings.unitHeight);
+  //node's y = get total sum of previous rows heights (they must be already calculated)
+  const y = getNodeTopOffset(node);
+
   //set abs position of the node (calculated relatively parent group)
   node.position = new go.Point(x, y);
 
   //node width = (width in units) * (unit width)
   node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
-  node.height = settings.unitHeight;
+  //node.height = settings.unitHeight;
   node.resizable = false;
 
-  console.log("===", nodeLayout, node.position)
-
-  if (node instanceof go.Group) {
+  if (node instanceof go.Group && node.memberParts.count !== 0) {
 
     const setPosition = setGroupPosition(mapNodeToParams(node));
-    node.memberParts.iterator.filter(n => n instanceof go.Node).each(setPosition);
+
+    getChildrenNodes(node).each(setPosition);
+
+    node.height = getGroupHeight(node);
+
+  } else {
+
+    //If this is NOT group or number of the children nodes is zero, then set this node height to the fixed value
+    node.height = settings.unitHeight;
   }
+
+  //set node height with respect of children total height
+  //const childrenTotalHeight =
+
+
+  //console.log("+++", node.height);
 
   /*
   nodes.forEach((group: go.Group, i) => {
