@@ -122,10 +122,10 @@ const setGroupPosition = (parent: NodeParams) => (node: go.Node) => {
     //func to calc position and width of children nodes
     const setPosition = setGroupPosition(mapNodeToParams(node));
 
-    //set children node positions and size
+    //set children nodes positions and size
     getChildrenNodes(node).each(setPosition);
 
-    //get group height by calculating height of the children nodes
+    //set group height by calculating height of the children nodes
     node.height = getGroupHeight(node);
 
   } else {

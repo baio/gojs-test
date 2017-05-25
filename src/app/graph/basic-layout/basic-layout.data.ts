@@ -18,6 +18,7 @@ export const diagram: GraphView = {
     },
     <any>{
         key: "-3",
+        group: "-2",
         isGroup: true,
         data: {
             layout: {
@@ -57,7 +58,7 @@ export const diagram: GraphView = {
     },
     {
       key: "n-2",
-      group: "-2",
+      group: "-3",
       category: "rect",
       data: {
           layout: {
@@ -83,7 +84,7 @@ export const diagram: GraphView = {
     },
     {
       key: "n-4",
-      group: "-2",
+      group: "-3",
       category: "rect",
       data: {
           layout: {
