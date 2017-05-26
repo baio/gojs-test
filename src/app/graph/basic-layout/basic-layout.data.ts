@@ -4,18 +4,32 @@ export const diagram: GraphView = {
   nodes: [
 
     <any>{
+        key: "-2",
+        isGroup: true,
+        data: {
+            layout: {
+              row: 0,
+              cols: [0, 2]
+            },
+            label: "g-1",
+            isCloseToComplete: true,
+            state: "passed"
+        }
+    },
+    <any>{
         key: "-1",
+        group: "-2",
         isGroup: true,
         data: {
             layout: {
               row: 0,
               cols: [0, 1]
             },
-            label: "g-1",
-            isCloseToComplete: true,
+            label: "g-3",
+            isCloseToComplete: false,
             state: "passed"
         }
-    }/*,
+    },
     <any>{
         key: "-3",
         group: "-2",
@@ -23,13 +37,14 @@ export const diagram: GraphView = {
         data: {
             layout: {
               row: 0,
-              cols: [1, 3]
+              cols: [1, 2]
             },
             label: "g-3",
             isCloseToComplete: false,
             state: "passed"
         }
-    },
+    }
+    /*,
     <any>{
         key: "-2",
         isGroup: true,
@@ -42,7 +57,7 @@ export const diagram: GraphView = {
             isCloseToComplete: false,
             state: "passed"
         }
-    }*/,
+    },
     {
       key: "n-1",
       group: "-1",
@@ -55,7 +70,7 @@ export const diagram: GraphView = {
           state: "passed",
           label: "n-1",
       }
-    }/*,
+    },
     {
       key: "n-2",
       group: "-3",
@@ -68,7 +83,7 @@ export const diagram: GraphView = {
           state: "passed",
           label: "n-2"
       }
-    }*/,
+    },
     {
       key: "n-3",
       group: "-1",

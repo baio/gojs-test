@@ -5,10 +5,17 @@ const settings = {
 
   unitWidth: 200,
   unitHeight: 50,
-  nodePadding: {
+  nodeMargin: {
     top: 5,
-    bottom: 0,
+    bottom: 5,
+    right: 5,
     left: 5
+  },
+  groupPadding: {
+    top: 7,
+    bottom: 7,
+    right: 7,
+    left: 7
   }
 }
 
@@ -116,27 +123,31 @@ const getNodeTopRelativeOffset = (node: go.Node) => {
   )(rowHeights);
 }
 
-const setNodePadding = (padding: {top?: number, right?: number, bottom?: number, left?: number}) => (node: go.Node) => {
+const setNodeMargin = (margin: {top?: number, right?: number, bottom?: number, left?: number}) => (node: go.Node) => {
+
+  const top = margin.top || 0;
+  const bottom = margin.bottom || 0;
+  const left = margin.left || 0;
+  const right = margin.right || 0;
+
+  node.position = new go.Point(node.position.x + left, node.position.y + top);
+
+  node.width = node.width - (left + right);
+  node.height = node.height - (top + bottom);
+
+}
+
+const setGroupPadding = (padding: {top?: number, right?: number, bottom?: number, left?: number}) => (node: go.Node) => {
 
   const top = padding.top || 0;
   const bottom = padding.bottom || 0;
   const left = padding.left || 0;
   const right = padding.right || 0;
 
-  //node.position.y = node.position.y + top;
+  node.position = new go.Point(node.position.x - top, node.position.y - left);
 
-  //node.position.y = node.position.y + top;
-  //node.position.x = node.position.x + 10;
-  node.position = new go.Point(node.position.x + left, node.position.y + top);
-
-  node.width = node.width - (left + right);
-  node.height = node.height - (top + bottom);
-
-
-  //console.log("111", node.position.x);
-  //node.position.x = 20;//20node.position.x + 50;
-  //console.log("222", node.position.x);
-  //node.width = node.width - (left + right);
+  node.width = node.width + (left + right);
+  node.height = node.height + (top + bottom);
 
 }
 
@@ -188,8 +199,10 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
     //set group height by calculating height of the children nodes
     node.height = getGroupHeight(node);
 
+    setGroupPadding(settings.groupPadding)(node);
+
     //after node height is calculated, modify children nodes height according to paddings
-    getChildrenNodes(node).each(setNodePadding(settings.nodePadding));
+    //getChildrenNodes(node).each(setNodeMargin(settings.nodeMargin));
 
   } else {
 

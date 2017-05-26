@@ -44,15 +44,21 @@ export interface DiagramConfig {
 const settings = {
 
   groupMargin: {
-    top: 3
+    left: 3,
+    right: 3
   },
 
   nodeMargin: {
-    left: 3,
-    top: 3
+    left: 5,
+    top: 5,
+    right: 5,
+    bottom: 5
   }
 
 }
+
+const getMargin = (margin: {top?: number, right?: number, bottom?: number, left?: number}) =>
+  new go.Margin(margin.top || 0, margin.right || 0, margin.bottom || 0, margin.left || 0 )
 
 const getEntyColor = R.curry((colors: EntyStateColors, type: "fill"|"text"|"border", enty: any) : string =>
   colors[enty.data.state][type]
@@ -82,7 +88,8 @@ const chainContent = f =>
 const rectNode = chainContent((env: DiagramConfig, content) =>  $(go.Node, "Auto",
         $(go.Shape, {
             geometryString: "F M 0 0, 150 0, 155 50, 150 100, 0 100, 0 0",
-            strokeWidth: 1
+            strokeWidth: 1,
+            margin: getMargin(settings.nodeMargin)
           },
           new go.Binding("stroke", "", getEntyColor(env.nodeColors, "border")),
           new go.Binding("fill", "", getEntyColor(env.nodeColors, "fill")),
@@ -93,7 +100,8 @@ const rectNode = chainContent((env: DiagramConfig, content) =>  $(go.Node, "Auto
 
 const roundRectNode = chainContent((env: DiagramConfig, content) =>  $(go.Node, "Auto",  // the Shape will go around the TextBlock
         $(go.Shape, "RoundedRectangle", {
-           strokeWidth: 1
+           strokeWidth: 1,
+           margin: getMargin(settings.nodeMargin)
           },
           new go.Binding("stroke", "", getEntyColor(env.nodeColors, "border")),
           new go.Binding("fill", "", getEntyColor(env.nodeColors, "fill"))
@@ -109,7 +117,8 @@ const circleNode =
           height: 40,
           portId: "",
           fromSpot: go.Spot.Right,
-          toSpot: go.Spot.Left
+          toSpot: go.Spot.Left,
+          margin: getMargin(settings.nodeMargin)
         },
         new go.Binding("stroke", "", getEntyColor(env.nodeColors, "border")),
         new go.Binding("fill", "", getEntyColor(env.nodeColors, "fill"))
@@ -165,8 +174,8 @@ const groupTemplate = Reader((env: DiagramConfig) =>
       $(go.Shape, "Rectangle",
         {
           alignment: go.Spot.TopLeft,
-          fill: "red"//,
-          //margin: getMargin(settings.groupMargin)
+          fill: "red",
+          margin: getMargin(settings.groupMargin)
         },
         new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
         new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
