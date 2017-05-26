@@ -15,7 +15,7 @@ export const diagram: GraphView = {
             isCloseToComplete: true,
             state: "passed"
         }
-    },
+    }/*,
     <any>{
         key: "-3",
         group: "-2",
@@ -42,7 +42,7 @@ export const diagram: GraphView = {
             isCloseToComplete: false,
             state: "passed"
         }
-    },
+    }*/,
     {
       key: "n-1",
       group: "-1",
@@ -55,7 +55,7 @@ export const diagram: GraphView = {
           state: "passed",
           label: "n-1",
       }
-    },
+    }/*,
     {
       key: "n-2",
       group: "-3",
@@ -68,7 +68,7 @@ export const diagram: GraphView = {
           state: "passed",
           label: "n-2"
       }
-    },
+    }*/,
     {
       key: "n-3",
       group: "-1",
@@ -81,7 +81,7 @@ export const diagram: GraphView = {
           state: "passed",
           label: "n-3",
       }
-    },
+    }/*,
     {
       key: "n-4",
       group: "-3",
@@ -95,15 +95,15 @@ export const diagram: GraphView = {
           label: "n-4",
       }
     }
-  ],
-  links: [
+  */],
+  links: [/*
     {
       from: "n-1",
       to: "n-2",
       data: {
         state: "passed"
       }
-    }
+    }*/
   ]
 };
 

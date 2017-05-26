@@ -40,6 +40,20 @@ export interface DiagramConfig {
   nodeColors: EntyStateColors
 }
 
+
+const settings = {
+
+  groupMargin: {
+    top: 3
+  },
+
+  nodeMargin: {
+    left: 3,
+    top: 3
+  }
+
+}
+
 const getEntyColor = R.curry((colors: EntyStateColors, type: "fill"|"text"|"border", enty: any) : string =>
   colors[enty.data.state][type]
 )
@@ -51,7 +65,7 @@ const getSimpleColor = R.curry((colors: SimpleStateColors, enty: any) : string =
 const nodeContent = Reader((env: DiagramConfig) =>
     $(go.TextBlock,
         {
-          margin: 3,
+          //margin: 3,//!!!
           row: 1,
           column: 1,
           maxSize: new go.Size(200, NaN)
@@ -146,18 +160,23 @@ const groupTemplate = Reader((env: DiagramConfig) =>
         //layout: $(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }), //$(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }),
         subGraphExpandedChanged: env.onGroupCollapse || null,
         isSubGraphExpanded: true,
-        computesBoundsIncludingLocation: true,
-        resizeObjectName: "group_rectangle",
-        locationObjectName: "group_rectangle"
+        computesBoundsIncludingLocation: true
       },
       $(go.Shape, "Rectangle",
         {
-          name: "group_rectangle",
           alignment: go.Spot.TopLeft,
-          fill: "white"
+          fill: "red"//,
+          //margin: getMargin(settings.groupMargin)
         },
-        new go.Binding("stroke", "", getEntyColor(env.groupColors, "border")),
-      )/*,
+        new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
+        new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
+          //console.log("---", data, data.group, lt.diagram.findNodeForKey("-2"));
+          //return data.group ? 5 : 0;
+        }),
+        */
+      )
+      //$(go.Placeholder, { padding: 10 })
+      /*,
       $(go.Panel, "Vertical", // position header above the subgraph
           { defaultAlignment: go.Spot.Left, margin: 0 },
           $(go.Panel, "Horizontal", // the header
