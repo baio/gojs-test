@@ -7,7 +7,8 @@ const settings = {
   unitHeight: 50,
   nodePadding: {
     top: 5,
-    bottom: 0
+    bottom: 0,
+    left: 5
   }
 }
 
@@ -55,8 +56,7 @@ const getGroupHeight = (group: go.Group) => {
     for (let i = nl.cols[0]; i < nl.cols[1]; i++) {
       //update cols heights for single node
       //height must be real, whole node size including padding
-      const height = getNodeSizeWithPadding(settings.nodePadding, n).height;
-      colHeights[i] = colHeights[i] ? colHeights[i] + height : height;
+      colHeights[i] = colHeights[i] ? colHeights[i] + n.height : n.height;
     }
   });
 
@@ -102,9 +102,9 @@ const getNodeTopRelativeOffset = (node: go.Node) => {
       const nl: NodeLayout = n.data.data.layout;
       for (let i = 0; i < nodeRow; i++) {
         //get row with max height
-        const height = getNodeSizeWithPadding(settings.nodePadding, n).height;
-        if (!rowHeights[i] || height > rowHeights[i]) {
-          rowHeights[i] = height;
+
+        if (!rowHeights[i] || n.height > rowHeights[i]) {
+          rowHeights[i] = n.height;
         }
       }
     });
@@ -116,12 +116,28 @@ const getNodeTopRelativeOffset = (node: go.Node) => {
   )(rowHeights);
 }
 
-const setNodePadding = (padding: {top?: number, right?: number, bottom?: number, left?: number}, node: go.Node) => {
+const setNodePadding = (padding: {top?: number, right?: number, bottom?: number, left?: number}) => (node: go.Node) => {
+
   const top = padding.top || 0;
   const bottom = padding.bottom || 0;
+  const left = padding.left || 0;
+  const right = padding.right || 0;
 
-  node.position.y = node.position.y + top;
+  //node.position.y = node.position.y + top;
+
+  //node.position.y = node.position.y + top;
+  //node.position.x = node.position.x + 10;
+  node.position = new go.Point(node.position.x + left, node.position.y + top);
+
+  node.width = node.width - (left + right);
   node.height = node.height - (top + bottom);
+
+
+  //console.log("111", node.position.x);
+  //node.position.x = 20;//20node.position.x + 50;
+  //console.log("222", node.position.x);
+  //node.width = node.width - (left + right);
+
 }
 
 const getNodeSizeWithPadding = (padding: {top?: number, right?: number, bottom?: number, left?: number}, node: go.Node) => {
@@ -150,13 +166,12 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
   const y = getNodeTopRelativeOffset(node) + parentPosition.y;
 
   //set abs position of the node (calculated relatively parent group)
-  node.position = new go.Point(x, y + settings.nodePadding.top);
+  node.position = new go.Point(x, y);
 
   //TODO: calc additional space required for node padding
   //get ancestors count * padding
   //node width = (width in units) * (unit width)
   node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
-
 
   //node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
   //node.height = settings.unitHeight;
@@ -172,15 +187,14 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
 
     //set group height by calculating height of the children nodes
     node.height = getGroupHeight(node);
-    //set group width by calculating width of the children nodes
-    //node.width = getGroupWidth(node);
+
+    //after node height is calculated, modify children nodes height according to paddings
+    getChildrenNodes(node).each(setNodePadding(settings.nodePadding));
 
   } else {
 
     //If this is NOT group or number of the children nodes is zero, then set this node height to the fixed value
     node.height = settings.unitHeight;
-
-    setNodePadding(settings.nodePadding, node);
   }
 }
 
@@ -238,3 +252,4 @@ export class RangeGroupLayout extends go.GridLayout {
 
   }
 }
+
