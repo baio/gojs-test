@@ -175,8 +175,8 @@ const groupTemplate = Reader((env: DiagramConfig) =>
       $(go.Shape, "Rectangle",
         {
           alignment: go.Spot.TopLeft,
-          fill: "red",
-          margin: new go.Margin(0, 0, 0, 2)
+          fill: "red"
+          //margin: new go.Margin(0, 0, 0, 2)
         },
         new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
         new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
@@ -188,7 +188,7 @@ const groupTemplate = Reader((env: DiagramConfig) =>
       $(go.Placeholder,
       {
         alignment: go.Spot.TopRight,
-        padding: new go.Margin(10, 10, 10, 10)
+        //padding: new go.Margin(10, 10, 10, 10)
       })
       /*,
       $(go.Panel, "Vertical", // position header above the subgraph

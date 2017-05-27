@@ -87,7 +87,7 @@ export const diagram: GraphView = {
           state: "passed",
           label: "n-3",
       }
-    },
+    }/*,
     {
       key: "n-4",
       group: "-1",
@@ -100,7 +100,7 @@ export const diagram: GraphView = {
           state: "passed",
           label: "n-3",
       }
-    }
+    }*/
 
   ],
   links: [/*
