@@ -1,5 +1,14 @@
 import { GraphView } from './basic-layout.types';
 
+/*
+[
+  [
+    [0, 1]
+    [2]
+  ]
+]
+*/
+
 export const diagram: GraphView = {
   nodes: [
 

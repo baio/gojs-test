@@ -44,8 +44,7 @@ export interface DiagramConfig {
 const settings = {
 
   groupMargin: {
-    left: 3,
-    right: 3
+    left: 3
   },
 
   nodeMargin: {
@@ -166,17 +165,18 @@ const groupTemplate = Reader((env: DiagramConfig) =>
   $(go.Group, "Auto",
       {
         selectable: true,
-        //layout: $(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }), //$(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }),
+        layout: $(go.GridLayout, { spacing: new go.Size(3, 3) }),
         subGraphExpandedChanged: env.onGroupCollapse || null,
         isSubGraphExpanded: true,
-        computesBoundsIncludingLocation: true//,
+        //computesBoundsIncludingLocation: true,
+        //padding on group
         //padding: new go.Margin(3, 3, 3, 3)
       },
       $(go.Shape, "Rectangle",
         {
           alignment: go.Spot.TopLeft,
-          fill: "red"
-          ///margin: getMargin(settings.groupMargin)
+          fill: "red",
+          margin: getMargin(settings.groupMargin)
         },
         new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
         new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
@@ -185,7 +185,11 @@ const groupTemplate = Reader((env: DiagramConfig) =>
         }),
         */
       ),
-      $(go.Placeholder, { padding: new go.Margin(5, 5, 5, 5) })
+      $(go.Placeholder,
+      {
+        alignment: go.Spot.TopLeft,
+        padding: new go.Margin(10, 10, 10, 10)
+      })
       /*,
       $(go.Panel, "Vertical", // position header above the subgraph
           { defaultAlignment: go.Spot.Left, margin: 0 },

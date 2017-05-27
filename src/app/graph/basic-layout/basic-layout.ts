@@ -176,7 +176,7 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
   //node's y = get total sum of group's previous rows heights (they must be already calculated) + parent offset
   const y = getNodeTopRelativeOffset(node) + parentPosition.y;
 
-  console.log("1111", y);
+  //console.log("1111", y);
 
   //set abs position of the node (calculated relatively parent group)
   node.position = new go.Point(x, y);
@@ -197,8 +197,11 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
     getChildrenNodes(node).each(setPosition);
 
     //container's size is setup by layout automatically, based on the children which this layout incorporate
-    node.height = NaN;
-    node.width = NaN;
+    node.width = NaN; //(nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
+    node.height = NaN; //getGroupHeight(node);
+    //node.resizeObject.minSize = new go.Size((nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth, getGroupHeight(node));
+    //node.resizable = true;
+
 
     //after node height is calculated, modify children nodes height according to paddings
     //getChildrenNodes(node).each(setNodeMargin(settings.nodeMargin));
@@ -211,6 +214,8 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
     //node width = (width in units) * (unit width)
     node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
     node.height = settings.unitHeight;
+
+    console.log("===", node.width, node.height, node.position);
   }
 }
 

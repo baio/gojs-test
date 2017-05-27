@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { GraphView, GroupView } from './basic-layout/basic-layout.types';
 import { create, bind, DiagramConfig } from './basic-layout/basic-scheme';
-import { diagram } from './basic-layout/basic-layout.data';
+import { diagram as data1 } from './basic-layout/basic-layout-1.data';
+import { diagram as data2 } from './basic-layout/basic-layout-2.data';
 
 
 @Component({
@@ -51,7 +52,7 @@ export class GraphComponent implements OnInit {
 
 
       const graph = create("graph_canvas").run(config);
-      bind(graph, diagram);
+      bind(graph, data2);
   }
 
 }
