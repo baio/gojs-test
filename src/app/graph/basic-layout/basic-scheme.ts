@@ -165,7 +165,7 @@ const groupTemplate = Reader((env: DiagramConfig) =>
   $(go.Group, "Auto",
       {
         selectable: true,
-        layout: $(go.GridLayout, { spacing: new go.Size(3, 3) }),
+        //layout: $(go.GridLayout, { spacing: new go.Size(3, 3) }),
         subGraphExpandedChanged: env.onGroupCollapse || null,
         isSubGraphExpanded: true,
         //computesBoundsIncludingLocation: true,
@@ -176,7 +176,7 @@ const groupTemplate = Reader((env: DiagramConfig) =>
         {
           alignment: go.Spot.TopLeft,
           fill: "red",
-          margin: getMargin(settings.groupMargin)
+          //margin: getMargin(settings.groupMargin)
         },
         new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
         new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
@@ -188,7 +188,7 @@ const groupTemplate = Reader((env: DiagramConfig) =>
       $(go.Placeholder,
       {
         alignment: go.Spot.TopLeft,
-        padding: new go.Margin(10, 10, 10, 10)
+        //padding: new go.Margin(10, 0, 10, 0)
       })
       /*,
       $(go.Panel, "Vertical", // position header above the subgraph

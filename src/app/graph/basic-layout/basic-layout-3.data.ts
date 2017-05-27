@@ -2,23 +2,19 @@ import { GraphView } from './basic-layout.types';
 
 /*
 [
-  [
-    [0, 1]
-    [2]
-  ]
+  [][]
 ]
 */
 
 export const diagram: GraphView = {
   nodes: [
-
     <any>{
         key: "-1",
         isGroup: true,
         data: {
             layout: {
               row: 0,
-              cols: [0, 1]
+              cols: [0, 2]
             },
             label: "g-1",
             isCloseToComplete: true,
@@ -33,6 +29,20 @@ export const diagram: GraphView = {
             layout: {
               row: 0,
               cols: [0, 1]
+            },
+            label: "g-3",
+            isCloseToComplete: false,
+            state: "passed"
+        }
+    },
+    <any>{
+        key: "-3",
+        group: "-1",
+        isGroup: true,
+        data: {
+            layout: {
+              row: 0,
+              cols: [1, 2]
             },
             label: "g-3",
             isCloseToComplete: false,
@@ -67,7 +77,7 @@ export const diagram: GraphView = {
     },
     {
       key: "n-3",
-      group: "-2",
+      group: "-3",
       category: "rect",
       data: {
           layout: {
