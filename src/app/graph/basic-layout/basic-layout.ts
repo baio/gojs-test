@@ -123,6 +123,7 @@ const getNodeTopRelativeOffset = (node: go.Node) => {
   )(rowHeights);
 }
 
+/*
 const setNodeMargin = (margin: {top?: number, right?: number, bottom?: number, left?: number}) => (node: go.Node) => {
 
   const top = margin.top || 0;
@@ -151,13 +152,14 @@ const setGroupPadding = (padding: {top?: number, right?: number, bottom?: number
 
 }
 
+
 const getNodeSizeWithPadding = (padding: {top?: number, right?: number, bottom?: number, left?: number}, node: go.Node) => {
   const top = padding.top || 0;
   const bottom = padding.bottom || 0;
 
   return {height: node.height + (top + bottom), width: node.width};
 }
-
+*/
 
 const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
 
@@ -242,7 +244,7 @@ export class RangeGraphLayout extends go.GridLayout {
   public doLayout(coll) {
     //super.doLayout(coll);
     this._doLayout(coll, this.group);
-    //super.doLayout(coll);
+    super.doLayout(coll);
   }
 }
 

@@ -176,7 +176,7 @@ const groupTemplate = Reader((env: DiagramConfig) =>
         {
           alignment: go.Spot.TopLeft,
           fill: "red",
-          //margin: getMargin(settings.groupMargin)
+          margin: new go.Margin(0, 0, 0, 2)
         },
         new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
         new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
@@ -187,8 +187,8 @@ const groupTemplate = Reader((env: DiagramConfig) =>
       ),
       $(go.Placeholder,
       {
-        alignment: go.Spot.TopLeft,
-        //padding: new go.Margin(10, 0, 10, 0)
+        alignment: go.Spot.TopRight,
+        padding: new go.Margin(10, 10, 10, 10)
       })
       /*,
       $(go.Panel, "Vertical", // position header above the subgraph
@@ -244,7 +244,7 @@ export const create = (selector: string) : Reader => {
 }
 
 
-export const bind = (diagram: any, graph: T.GraphView) => {
+export const bind = (diagram, graph: T.GraphView) => {
 
     if (diagram.model.nodeDataArray.length > 0) {
 
@@ -271,6 +271,7 @@ export const bind = (diagram: any, graph: T.GraphView) => {
     }
     else {
       diagram.model = new go.GraphLinksModel(graph.nodes, graph.links);
+
     }
 
 }
