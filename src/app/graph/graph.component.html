@@ -1,4 +1,6 @@
 <div
-  id="graph_canvas" style="width: 800px; height: 800px"
+  [attr.id]="id"
+  [style.with.px]="size ? size.width : 200"
+  [style.height.px]="size ? size.height : 200"
 >
 </div>

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 
+import { diagram as data1 } from './graph/basic-layout/basic-layout-1.data';
+import { diagram as data2 } from './graph/basic-layout/basic-layout-2.data';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -7,4 +10,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app works!';
+  data1 = data1;
+  data2 = data2;
 }
