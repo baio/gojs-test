@@ -169,13 +169,14 @@ const groupTemplate = Reader((env: DiagramConfig) =>
         //layout: $(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }), //$(RangeGroupLayout),//$(go.TreeLayout, { nodeSpacing: 3 }),
         subGraphExpandedChanged: env.onGroupCollapse || null,
         isSubGraphExpanded: true,
-        computesBoundsIncludingLocation: true
+        computesBoundsIncludingLocation: true//,
+        //padding: new go.Margin(3, 3, 3, 3)
       },
       $(go.Shape, "Rectangle",
         {
           alignment: go.Spot.TopLeft,
-          fill: "red",
-          margin: getMargin(settings.groupMargin)
+          fill: "red"
+          ///margin: getMargin(settings.groupMargin)
         },
         new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
         new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
@@ -183,8 +184,8 @@ const groupTemplate = Reader((env: DiagramConfig) =>
           //return data.group ? 5 : 0;
         }),
         */
-      )
-      //$(go.Placeholder, { padding: 10 })
+      ),
+      $(go.Placeholder, { padding: new go.Margin(5, 5, 5, 5) })
       /*,
       $(go.Panel, "Vertical", // position header above the subgraph
           { defaultAlignment: go.Spot.Left, margin: 0 },

@@ -176,13 +176,13 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
   //node's y = get total sum of group's previous rows heights (they must be already calculated) + parent offset
   const y = getNodeTopRelativeOffset(node) + parentPosition.y;
 
+  console.log("1111", y);
+
   //set abs position of the node (calculated relatively parent group)
   node.position = new go.Point(x, y);
 
   //TODO: calc additional space required for node padding
   //get ancestors count * padding
-  //node width = (width in units) * (unit width)
-  node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
 
   //node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
   //node.height = settings.unitHeight;
@@ -196,17 +196,20 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
     //set children nodes positions and size
     getChildrenNodes(node).each(setPosition);
 
-    //set group height by calculating height of the children nodes
-    node.height = getGroupHeight(node);
-
-    setGroupPadding(settings.groupPadding)(node);
+    //container's size is setup by layout automatically, based on the children which this layout incorporate
+    node.height = NaN;
+    node.width = NaN;
 
     //after node height is calculated, modify children nodes height according to paddings
     //getChildrenNodes(node).each(setNodeMargin(settings.nodeMargin));
 
   } else {
 
-    //If this is NOT group or number of the children nodes is zero, then set this node height to the fixed value
+    //If this is NOT group or number of the children nodes is zero then this is a leaf
+    //setup leaf size manually
+
+    //node width = (width in units) * (unit width)
+    node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
     node.height = settings.unitHeight;
   }
 }
