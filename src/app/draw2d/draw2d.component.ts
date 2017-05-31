@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-declare var require;
+// declare var require;
 
-require('draw2d-wrapper');
+// require('draw2d-wrapper');
 
 let draw2d = (<any>window).draw2d;
 

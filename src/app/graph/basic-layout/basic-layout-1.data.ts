@@ -18,7 +18,7 @@ export const diagram: GraphView = {
         data: {
             layout: {
               row: 0,
-              cols: [0, 1]
+              cols: [0, 2]
             },
             label: "g-1",
             isCloseToComplete: true,
@@ -32,7 +32,7 @@ export const diagram: GraphView = {
         data: {
             layout: {
               row: 0,
-              cols: [0, 1]
+              cols: [0, 2]
             },
             label: "g-3",
             isCloseToComplete: false,

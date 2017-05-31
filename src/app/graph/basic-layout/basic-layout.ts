@@ -34,12 +34,17 @@ interface NodePosition {
 interface NodeParams {
   layout: NodeLayout
   position: NodePosition
+  parentsNumber: number
 }
 
 const mapNodeToParams = (node: go.Node) => ({
+  parentsNumber: getNodeParentsNumber(node) + 1,
   position: node.position,
   layout: node.data.data.layout
 })
+
+const getNodeParentsNumber = (node: go.Node) =>
+  node.containingGroup ? 1 + getNodeParentsNumber(node.containingGroup) : 0;
 
 const getNodesFomParts = (parts: go.Iterator<go.Part>) : go.Iterator<go.Node> =>
   <any>parts.iterator.filter(n => n instanceof go.Node);
@@ -164,24 +169,24 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
 
   if (!parent) {
     //set root group (layout) params (no relative offsets)
-    parent = { position: { x: 0, y: 0 }, layout: { row: 0, cols: [0, 0] } };
+    parent = { position: { x: 0, y: 0 }, layout: { row: 0, cols: [0, 0] }, parentsNumber: 0 };
   }
 
   const parentPosition = parent.position;
+  const parentsNumber = parent.parentsNumber;
   const parentLayout: NodeLayout = parent.layout;
 
   const nodeLayout: NodeLayout = node.data.data.layout;
 
   //node's x = container node x position + offset relative to the left border of the container in pixels = (offset in units) * (unit width)
-  const x = parentPosition.x + (nodeLayout.cols[0] - parentLayout.cols[0]) * settings.unitWidth;
+  const x = nodeLayout.cols[0] * settings.unitWidth + parentsNumber*settings.groupPadding.left;
   //node's y = get total sum of group's previous rows heights (they must be already calculated) + parent offset
-  const y = getNodeTopRelativeOffset(node) + parentPosition.y;
+  const y = getNodeTopRelativeOffset(node) + parentPosition.y; //+ settings.groupPadding.top;
 
   //console.log(node.data.data.label, x, y, parentPosition.y);
 
   //set abs position of the node (calculated relatively parent group)
   node.position = new go.Point(x, y);
-
   //TODO: calc additional space required for node padding
   //get ancestors count * padding
 
@@ -198,11 +203,10 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
     getChildrenNodes(node).each(setPosition);
 
     //container's size is setup by layout automatically, based on the children which this layout incorporate
-    node.width = NaN; //(nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
+    node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth - parentsNumber * settings.groupPadding.left - parent.parentsNumber * settings.groupPadding.right;
     node.height = NaN;
     //node.resizeObject.minSize = new go.Size((nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth, getGroupHeight(node));
     //node.resizable = true;
-
 
     //after node height is calculated, modify children nodes height according to paddings
     //getChildrenNodes(node).each(setNodeMargin(settings.nodeMargin));
@@ -213,7 +217,7 @@ const setGroupPositionAndSize = (parent: NodeParams) => (node: go.Node) => {
     //setup leaf size manually
 
     //node width = (width in units) * (unit width)
-    node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth;
+    node.width = (nodeLayout.cols[1] - nodeLayout.cols[0]) * settings.unitWidth  - parentsNumber * settings.groupPadding.left - parent.parentsNumber * settings.groupPadding.right;
     node.height = settings.unitHeight;
 
   }

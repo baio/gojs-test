@@ -86,9 +86,9 @@ const chainContent = f =>
 
 const rectNode = chainContent((env: DiagramConfig, content) =>  $(go.Node, "Auto",
         $(go.Shape, {
-            geometryString: "F M 0 0, 150 0, 155 50, 150 100, 0 100, 0 0",
+            // geometryString: "F M 0 0, 150 0, 155 50, 150 100, 0 100, 0 0",
             strokeWidth: 1,
-            margin: getMargin(settings.nodeMargin)
+            margin: 0
           },
           new go.Binding("stroke", "", getEntyColor(env.nodeColors, "border")),
           new go.Binding("fill", "", getEntyColor(env.nodeColors, "fill")),
@@ -162,68 +162,76 @@ const linkTemplate = Reader((env: DiagramConfig) =>
 )
 
 const groupTemplate = Reader((env: DiagramConfig) =>
-  $(go.Group, "Auto",
+  $(go.Group, "Vertical",
       {
         selectable: true,
         //layout: $(go.GridLayout, { spacing: new go.Size(3, 3) }),
         subGraphExpandedChanged: env.onGroupCollapse || null,
         isSubGraphExpanded: true,
-        //computesBoundsIncludingLocation: true,
+        computesBoundsAfterDrag: true,
+        computesBoundsIncludingLocation: true,
         //padding on group
         //padding: new go.Margin(3, 3, 3, 3)
       },
-      $(go.Shape, "Rectangle",
+      $(go.Panel, "Auto",
         {
           alignment: go.Spot.TopLeft,
-          fill: "red"
-          //margin: new go.Margin(0, 0, 0, 2)
+          stretch: go.GraphObject.Horizontal
         },
-        new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
-        new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
-          //console.log("---", data, data.group, lt.diagram.findNodeForKey("-2"));
-          //return data.group ? 5 : 0;
-        }),
-        */
-      ),
-      $(go.Placeholder,
-      {
-        alignment: go.Spot.TopRight,
-        //padding: new go.Margin(10, 10, 10, 10)
-      })
-      /*,
-      $(go.Panel, "Vertical", // position header above the subgraph
-          { defaultAlignment: go.Spot.Left, margin: 0 },
-          $(go.Panel, "Horizontal", // the header
-            {
-              alignment: go.Spot.Top,
-              stretch: go.GraphObject.Fill
-            },
-            $("SubGraphExpanderButton", { alignment: go.Spot.Left }),
-            $(go.TextBlock,
+        $(go.Shape, "Rectangle",
+          {
+            fill: "red"
+            //margin: new go.Margin(0, 0, 0, 2)
+          },
+          new go.Binding("stroke", "", getEntyColor(env.groupColors, "border"))/*,
+          new go.Binding("margin", "", (data: T.NodeView, lt: go.GraphObject) => {
+            //console.log("---", data, data.group, lt.diagram.findNodeForKey("-2"));
+            //return data.group ? 5 : 0;
+          }),
+          */
+        ),
+        $(go.Placeholder,
+        {
+          alignment: go.Spot.TopLeft,
+          //padding: new go.Margin(10, 10, 10, 10)
+        })
+        /*,
+        $(go.Panel, "Vertical", // position header above the subgraph
+            { defaultAlignment: go.Spot.Left, margin: 0 },
+            $(go.Panel, "Horizontal", // the header
               {
-                font: "14px Sans-Serif",
-                margin: 4
+                alignment: go.Spot.Top,
+                stretch: go.GraphObject.Fill
               },
-              new go.Binding("text", "", x =>
-                x.data.isCloseToComplete ? x.data.label + " [^] " : x.data.label
+              $("SubGraphExpanderButton", { alignment: go.Spot.Left }),
+              $(go.TextBlock,
+                {
+                  font: "14px Sans-Serif",
+                  margin: 4
+                },
+                new go.Binding("text", "", x =>
+                  x.data.isCloseToComplete ? x.data.label + " [^] " : x.data.label
+                ),
+                new go.Binding("stroke", "", getEntyColor(env.groupColors, "text")),
               ),
-              new go.Binding("stroke", "", getEntyColor(env.groupColors, "text")),
+              new go.Binding("background", "", getEntyColor(env.groupColors, "fill"))
             ),
-            new go.Binding("background", "", getEntyColor(env.groupColors, "fill"))
-          ),
-          $(go.Placeholder, { padding: 10 })
-      )
+            $(go.Placeholder, { padding: 10 })
+        )
       */
+      )
     )
 )
 
 const diagram = (selector: string) => Reader((env: DiagramConfig) =>
     $(go.Diagram, selector,  // create a Diagram for the DIV HTML element
         {
-            initialAutoScale: go.Diagram.UniformToFill,
+            // initialAutoScale: go.Diagram.UniformToFill,
+            contentAlignment: go.Spot.TopLeft,
             layout: $(RangeGraphLayout),
             "animationManager.isEnabled": false,
             "undoManager.isEnabled": false,
+            SelectionMoved: (e) => e.diagram.layoutDiagram(true),
             ObjectSingleClicked: env.onObjectSingleClicked || null
         }
     )
